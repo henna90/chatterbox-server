@@ -32,7 +32,7 @@ var app = {
     // Poll for new messages
     setInterval(function() {
       app.fetch(true);
-    }, 3000);
+    }, 1000);
   },
 
   send: function(message) {
@@ -42,20 +42,23 @@ var app = {
     $.ajax({
       url: app.server,
       type: 'POST',
-      data: message,
+      data: JSON.stringify(message),
       dataType: 'json',
       contentType: 'application/json',
       success: function (data) {
         data = JSON.parse(data);
-        console.log("IS THIS WORKING?", data);
+        // console.log("IS THIS WORKING?", data);
         // Clear messages input
-        app.$message.val('');
+        // app.$message.val('');
+
+        // app.renderMessages(message);
 
         // Trigger a fetch to update the messages, pass true to animate
-        app.fetch();
+        app.fetch(true);
       },
       error: function (error) {
         console.error('chatterbox: Failed to send message', error);
+        app.fetch(true);
       }
     });
   },
@@ -64,7 +67,7 @@ var app = {
     $.ajax({
       url: app.server,
       type: 'GET',
-      // data: { order: '-createdAt' },
+      data: {},
       contentType: 'application/json',
       success: function(data) {
         data = JSON.parse(data);
