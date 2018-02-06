@@ -51,6 +51,7 @@ var requestHandler = function(request, response) {
 
       // Request On: Data
       request.on('data', function(data) {
+        // console.log(data);
         result += data;        
       });
 
@@ -75,7 +76,7 @@ var requestHandler = function(request, response) {
 
   // Request Method: OPTIONS
   if (request.method === 'OPTIONS') {
-    response.end();
+    response.end(JSON.stringify(storage));
   }
 
   // Request and Response come from node's http module.
