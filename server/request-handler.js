@@ -51,9 +51,8 @@ var requestHandler = function(request, response) {
 
       // Request On: Data
       request.on('data', function(data) {
-        result += 'd';        
+        result += 'data';        
       });
-      console.log("FUCK", data);
 
       // Request On: End
       request.on('end', function() {
