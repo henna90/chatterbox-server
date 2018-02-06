@@ -11,8 +11,76 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+// Storage Object
+var storage = {
+  results: [
+    // {
+
+    //   roomname: 'lobby',
+    //   username: 'default',
+    //   text: 'anything'
+    // }
+  ]
+};
+
+
 
 var requestHandler = function(request, response) {
+
+  // Default Headers
+  var defaultCorsHeaders = {
+    'access-control-allow-origin': '*',
+    'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'access-control-allow-headers': 'content-type, accept',
+    'access-control-max-age': 10 // Seconds.
+  };
+    
+  var headers = defaultCorsHeaders;
+  headers['Content-Type'] = 'JSON';
+
+  // Status Code
+  var statusCode = 200;
+
+  // Request Method: POST
+  if (request.method === 'POST') {
+
+
+    if (request.url === '/classes/messages/') {
+      // Result (Empty String to push to)
+      var result = '';
+
+      // Request On: Data
+      request.on('data', function(data) {
+        result += 'd';        
+      });
+      console.log("FUCK", data);
+
+      // Request On: End
+      request.on('end', function() {
+        result = JSON.parse(result);
+        console.log("J", result);
+        response.end();
+      });
+      // storage.results.push(request._postData);
+    }
+  }
+
+
+  // Request Method: GET
+  if (request.method === 'GET') {
+    response.writeHead(statusCode, headers);
+    // Storage is Results Array  
+    response.end(JSON.stringify(storage));
+  }
+
+
+  // Request Method: OPTIONS
+  if (request.method === 'OPTIONS') {
+    response.writeHead(statusCode, headers);
+    response.end();
+
+  }
+
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -30,20 +98,16 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
   // The outgoing status.
-  var statusCode = 200;
 
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -52,7 +116,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  // response.end(JSON.stringify(test));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -64,12 +128,7 @@ var requestHandler = function(request, response) {
 //
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10 // Seconds.
-};
+
 
 // Export Request Handler
 exports.requestHandler = requestHandler;

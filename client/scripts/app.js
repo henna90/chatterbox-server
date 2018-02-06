@@ -36,14 +36,18 @@ var app = {
   },
 
   send: function(message) {
-    app.startSpinner();
-
+    // app.startSpinner();
     // POST the message to the server
+    console.log('SO FAR SO GOOD?', message);
     $.ajax({
       url: app.server,
       type: 'POST',
       data: message,
+      dataType: 'json',
+      contentType: 'application/json',
       success: function (data) {
+        data = JSON.parse(data);
+        console.log("IS THIS WORKING?", data);
         // Clear messages input
         app.$message.val('');
 
@@ -63,7 +67,8 @@ var app = {
       // data: { order: '-createdAt' },
       contentType: 'application/json',
       success: function(data) {
-        // console.log(data);
+        data = JSON.parse(data);
+        console.log(data);
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
 
