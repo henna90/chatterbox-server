@@ -35,7 +35,7 @@ var app = {
     }, 1000);
   },
 
-  send: function(message) {
+  /* send: function(message) {
     // app.startSpinner();
     // POST the message to the server
     console.log('SO FAR SO GOOD?', message);
@@ -45,20 +45,39 @@ var app = {
       data: JSON.stringify(message),
       dataType: 'json',
       contentType: 'application/json',
-      success: function (data) {
-        data = JSON.parse(data);
-        // console.log("IS THIS WORKING?", data);
+      success: function () {
         // Clear messages input
-        // app.$message.val('');
+        app.$message.val('');
 
-        // app.renderMessages(message);
+        app.renderMessages(message);
 
         // Trigger a fetch to update the messages, pass true to animate
         app.fetch(true);
       },
       error: function (error) {
         console.error('chatterbox: Failed to send message', error);
-        app.fetch(true);
+        // app.fetch(true);
+      }
+    });
+  }, */
+
+  send: function(message) {
+    app.startSpinner();
+
+    // POST the message to the server
+    $.ajax({
+      url: app.server,
+      type: 'POST',
+      data: JSON.stringify(message),
+      success: function (data) {
+        // Clear messages input
+        app.$message.val('');
+
+        // Trigger a fetch to update the messages, pass true to animate
+        app.fetch();
+      },
+      error: function (error) {
+        console.error('chatterbox: Failed to send message', error);
       }
     });
   },
@@ -67,31 +86,19 @@ var app = {
     $.ajax({
       url: app.server,
       type: 'GET',
-      data: {},
       contentType: 'application/json',
       success: function(data) {
         data = JSON.parse(data);
-        console.log(data);
+        // console.log(data);
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
 
         // Store messages for caching later
         app.messages = data.results;
 
-        // Get the last message
-        var mostRecentMessage = data.results[data.results.length - 1];
+        app.renderRoomList(data.results);
 
-        // Only bother updating the DOM if we have a new message
-        if (mostRecentMessage.objectId !== app.lastMessageId) {
-          // Update the UI with the fetched rooms
-          app.renderRoomList(data.results);
-
-          // Update the UI with the fetched messages
-          app.renderMessages(data.results, animate);
-
-          // Store the ID of the most recent message
-          app.lastMessageId = mostRecentMessage.objectId;
-        }
+        app.renderMessages(data.results, animate);
       },
       error: function(error) {
         

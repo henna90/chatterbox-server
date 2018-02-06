@@ -14,13 +14,12 @@ this file and include it in basic-server.js so that it actually works.
 // Storage Object
 var storage = {
   results: [
-    // {
-
-    //   roomname: 'lobby',
-    //   username: 'default',
-    //   text: 'anything'
-    // }
-  ]
+    {
+      roomname: 'lobby',
+      username: 'default',
+      text: 'anything',
+    }
+  ],
 };
 
 
@@ -36,10 +35,11 @@ var requestHandler = function(request, response) {
   };
     
   var headers = defaultCorsHeaders;
-  headers['Content-Type'] = 'JSON';
+  headers['Content-Type'] = 'text/plain';
 
   // Status Code
   var statusCode = 200;
+  response.writeHead(statusCode, headers);
 
   // Request Method: POST
   if (request.method === 'POST') {
@@ -51,14 +51,15 @@ var requestHandler = function(request, response) {
 
       // Request On: Data
       request.on('data', function(data) {
-        result += 'data';        
+        result += data;        
       });
 
       // Request On: End
       request.on('end', function() {
         result = JSON.parse(result);
-        console.log("J", result);
-        response.end();
+        storage.results.push(result);
+        // console.log("Message:", result);
+        response.end(JSON.stringify(storage));
       });
       // storage.results.push(request._postData);
     }
@@ -67,7 +68,6 @@ var requestHandler = function(request, response) {
 
   // Request Method: GET
   if (request.method === 'GET') {
-    response.writeHead(statusCode, headers);
     // Storage is Results Array  
     response.end(JSON.stringify(storage));
   }
@@ -75,9 +75,7 @@ var requestHandler = function(request, response) {
 
   // Request Method: OPTIONS
   if (request.method === 'OPTIONS') {
-    response.writeHead(statusCode, headers);
     response.end();
-
   }
 
   // Request and Response come from node's http module.
